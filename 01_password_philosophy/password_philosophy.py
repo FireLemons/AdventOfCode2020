@@ -4,7 +4,7 @@ import re
 input_data = open("input.txt", "r")
 valid_password_count = 0
 
-line_lexer = r"(\d+)-(\d+)\ (\w):\ (\w+)"
+line_lexer = re.compile(r"(\d+)-(\d+)\ (\w):\ (\w+)")
 
 for line in input_data:
     line_data = line_lexer.match(line)
