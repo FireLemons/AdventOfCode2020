@@ -15,6 +15,7 @@ for line in input_data:
 
     special_character_counter = re.compile(special_character)
 
+    # Need 2 iterators because they can't be reset after use
     character_matches_1 = special_character_counter.finditer(password)
     character_matches_2 = special_character_counter.finditer(password)
 
