@@ -1,8 +1,9 @@
 #!/usr/bin/python
 tree_product = 1
+input_terrain = open("input.txt", "r")
 
 def tree_count(delta_x, delta_y):
-    input_terrain = open("input.txt", "r")
+    input_terrain.seek(0)
     x = 0
     y = 0
     tree_count = 0
