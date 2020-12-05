@@ -10,6 +10,10 @@ end = len(numbers) - 1
 i = 0
 
 while i < end:
+    # Remove high numbers that can't possibly add to 2020
+    while numbers[i] + numbers[end] > 2020:
+        end -= 1
+
     j = i + 1
     end_prime = end
 
