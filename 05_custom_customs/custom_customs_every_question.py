@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-input_passport_data = open("input_simple.txt", "r")
+input_passport_data = open("input.txt", "r")
 
 alphabet_binary_values = {
     "a": 1,
@@ -29,10 +29,25 @@ alphabet_binary_values = {
     "x": 8388608,
     "y": 16777216,
     "z": 33554432,
+    "\n": 0,
 }
+
+group_shared_questions = -1
+count_sum = 0
 
 for line in input_passport_data:
     if line == "\n":
-        pass
+        for char in "{0:b}".format(group_shared_questions):
+            count_sum += 1 if char == "1" else 0
+        group_shared_questions = -1
     else:
-        pass
+        individual_questions = 0
+        for char in line:
+            individual_questions |= alphabet_binary_values[char]
+
+        group_shared_questions &= individual_questions
+
+for char in "{0:b}".format(group_shared_questions):
+    count_sum += 1 if char == "1" else 0
+
+print(count_sum)
