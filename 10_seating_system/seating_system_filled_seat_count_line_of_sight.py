@@ -2,33 +2,45 @@
 with open('input.txt', 'r') as file:
     seat_map = file.read()
 
+all_seats = {}
+closest_northern_seats = {}
+closest_west_seat = None
 line_count = 0
+line_length = seat_map.find('\n')
 row_index = 0
-row_seats = {}
-row_seats_upper = {}
-seats = []
 
 for char in seat_map:
     if char == '\n':
+        closest_west_seat = None
         line_count += 1
         row_index = 0
-        row_seats_upper = row_seats
-        row_seats = {}
     elif char == 'L':
         seat = {
             "occupied": [False, False],
             "neighbors": []
         }
 
-        seats.append(seat)
-        row_seats[row_index] = seat
+        all_seats[f'{row_index},{line_count}'] = seat
 
         potential_neighbors = [
-            row_seats.get(row_index - 1, None),
-            row_seats_upper.get(row_index - 1, None),
-            row_seats_upper.get(row_index, None),
-            row_seats_upper.get(row_index + 1, None)
+            closest_west_seat,
+            closest_northern_seats.get(row_index, None),
         ]
+
+        closest_northern_seats[row_index] = seat
+        closest_west_seat = seat
+
+        for i in range(min(line_count, row_index)):
+            potential_top_left_neighbor = all_seats.get(f'{row_index - (1 + i)},{line_count - (1 + i)}', None)
+            if potential_top_left_neighbor != None:
+                potential_neighbors.append(potential_top_left_neighbor)
+                break
+
+        for i in range(min(line_count, line_length - (row_index + 1))):
+            potential_top_right_neighbor = all_seats.get(f'{row_index + i + 1},{line_count - (i + 1)}', None)
+            if potential_top_right_neighbor != None:
+                potential_neighbors.append(potential_top_right_neighbor)
+                break
 
         for potential_neighbor in potential_neighbors:
             if potential_neighbor != None:
@@ -45,7 +57,7 @@ filled_seat_count = 0
 while seat_changed:
     seat_changed = False
 
-    for seat in seats:
+    for seat in all_seats.values():
         seat_occupied = seat["occupied"]
 
         adjacent_seat_count = 0
@@ -53,10 +65,10 @@ while seat_changed:
         for neighbor in seat["neighbors"]:
             if neighbor["occupied"][0]:
                 adjacent_seat_count += 1
-                if adjacent_seat_count >= 4:
+                if adjacent_seat_count >= 5:
                     break
 
-        if adjacent_seat_count >= 4 and seat_occupied[0]:
+        if adjacent_seat_count >= 5 and seat_occupied[0]:
             filled_seat_count -= 1
             seat_changed = True
             seat_occupied[1] = False
@@ -65,7 +77,7 @@ while seat_changed:
             seat_changed = True
             seat_occupied[1] = True
 
-    for seat in seats:
+    for seat in all_seats.values():
         seat_occupied = seat["occupied"]
         seat_occupied[0] = seat_occupied[1]
 
